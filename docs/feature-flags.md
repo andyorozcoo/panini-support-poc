@@ -1,4 +1,4 @@
-﻿# Feature Flags
+# Feature Flags
 
 ## Objetivo
 
@@ -6,52 +6,28 @@ Los Feature Flags permiten activar o desactivar funcionalidades durante pruebas 
 
 En esta PoC se usan para demostrar control de alcance y capacidad de evolucion del producto.
 
-## Flags propuestos
+## Flags implementados
 
-```kotlin
-object FeatureFlags {
-    const val enableTicketCreation = true
-    const val enablePriorityUpdates = true
-}
-```
+- `enableTicketCreation`: controla si se puede crear tickets.
+- `enablePriorityUpdates`: controla si se puede cambiar la prioridad de un ticket.
 
-## Flag: enableTicketCreation
+## Como se controlan
 
-Controla si el usuario puede crear tickets.
+Los flags se mantienen localmente en la aplicacion mediante `FeatureFlags`, pero no requieren editar codigo durante la demo. En el listado de tickets existe una seccion de controles internos con interruptores para activar o desactivar:
 
-Cuando esta activo:
+- creacion de tickets;
+- cambio de prioridad.
 
-- se muestra la accion para crear ticket;
-- el formulario permite guardar;
-- el Repository agrega el ticket al flujo reactivo.
+Esto permite simular un escenario de pruebas internas donde Panini habilita o deshabilita funciones sin modificar multiples pantallas.
 
-Cuando esta inactivo:
+## Por que no usar Remote Config
 
-- se oculta o deshabilita la accion;
-- la pantalla puede mostrar un mensaje simple indicando que la funcion no esta disponible.
+Para una PoC de corto alcance no se justifica implementar Firebase Remote Config, backend de configuracion o almacenamiento persistente de flags.
 
-## Flag: enablePriorityUpdates
-
-Controla si el usuario puede cambiar la prioridad de un ticket.
-
-Cuando esta activo:
-
-- se permite modificar prioridad;
-- el listado se reordena automaticamente.
-
-Cuando esta inactivo:
-
-- la prioridad se muestra solo como lectura;
-- se evita llamar a la accion de actualizacion.
-
-## Por que flags locales
-
-Para una PoC de corto alcance no se justifica implementar Remote Config, backend de configuracion o almacenamiento persistente de flags.
-
-Los flags locales son suficientes para:
+La solucion actual es suficiente para:
 
 - demostrar el patron;
-- controlar alcance del MVP;
+- controlar alcance del MVP desde la app;
 - explicar facilmente el flujo en el video;
 - permitir evolucion futura.
 
@@ -64,4 +40,3 @@ En una version empresarial posterior, estos flags podrian moverse a:
 - configuracion por rol de usuario.
 
 La interfaz de uso podria mantenerse similar para no afectar las pantallas.
-

@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 data class TicketDetailUiState(
     val ticket: Ticket? = null,
-    val canUpdatePriority: Boolean = FeatureFlags.enablePriorityUpdates,
+    val canUpdatePriority: Boolean = true,
     val message: String? = null
 )
 
@@ -34,6 +34,11 @@ class TicketDetailViewModel(
                 )
             }
         }
+        viewModelScope.launch {
+            FeatureFlags.state.collect { flags ->
+                _uiState.value = _uiState.value.copy(canUpdatePriority = flags.enablePriorityUpdates)
+            }
+        }
     }
 
     fun updateStatus(status: TicketStatus) {
@@ -42,7 +47,7 @@ class TicketDetailViewModel(
     }
 
     fun updatePriority(priority: TicketPriority) {
-        if (!FeatureFlags.enablePriorityUpdates) return
+        if (!_uiState.value.canUpdatePriority) return
         val success = ticketRepository.updatePriority(ticketId, priority)
         _uiState.value = _uiState.value.copy(message = if (success) "Prioridad actualizada" else "Ticket no encontrado")
     }

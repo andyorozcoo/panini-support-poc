@@ -13,7 +13,8 @@ import kotlinx.coroutines.launch
 
 data class TicketListUiState(
     val tickets: List<Ticket> = emptyList(),
-    val canCreateTickets: Boolean = FeatureFlags.enableTicketCreation
+    val canCreateTickets: Boolean = true,
+    val canUpdatePriority: Boolean = true
 )
 
 class TicketListViewModel(
@@ -28,6 +29,22 @@ class TicketListViewModel(
                 _uiState.value = _uiState.value.copy(tickets = tickets)
             }
         }
+        viewModelScope.launch {
+            FeatureFlags.state.collect { flags ->
+                _uiState.value = _uiState.value.copy(
+                    canCreateTickets = flags.enableTicketCreation,
+                    canUpdatePriority = flags.enablePriorityUpdates
+                )
+            }
+        }
+    }
+
+    fun setTicketCreationEnabled(enabled: Boolean) {
+        FeatureFlags.setTicketCreationEnabled(enabled)
+    }
+
+    fun setPriorityUpdatesEnabled(enabled: Boolean) {
+        FeatureFlags.setPriorityUpdatesEnabled(enabled)
     }
 }
 

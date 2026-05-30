@@ -14,10 +14,12 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -81,6 +83,32 @@ fun TicketListScreen(
             color = MaterialTheme.colorScheme.primary
         )
 
+        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "Controles internos",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
+                )
+                FeatureFlagRow(
+                    label = "Crear tickets",
+                    checked = uiState.canCreateTickets,
+                    onCheckedChange = viewModel::setTicketCreationEnabled
+                )
+                FeatureFlagRow(
+                    label = "Cambiar prioridad",
+                    checked = uiState.canUpdatePriority,
+                    onCheckedChange = viewModel::setPriorityUpdatesEnabled
+                )
+            }
+        }
+
         if (uiState.tickets.isEmpty()) {
             Text(text = "No hay tickets registrados.", style = MaterialTheme.typography.bodyMedium)
         } else {
@@ -139,5 +167,20 @@ private fun PriorityBadge(priority: TicketPriority) {
             style = MaterialTheme.typography.labelSmall,
             color = if (priority == TicketPriority.Low) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onPrimary
         )
+    }
+}
+@Composable
+private fun FeatureFlagRow(
+    label: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = label, style = MaterialTheme.typography.bodyMedium)
+        Switch(checked = checked, onCheckedChange = onCheckedChange)
     }
 }
