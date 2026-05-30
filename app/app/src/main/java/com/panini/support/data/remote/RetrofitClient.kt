@@ -1,0 +1,26 @@
+package com.panini.support.data.remote
+
+import com.panini.support.core.AppConstants
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
+object RetrofitClient {
+    private val loggingInterceptor = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY
+    }
+
+    private val client = OkHttpClient.Builder()
+        .addInterceptor(loggingInterceptor)
+        .build()
+
+    val ticketApiService: TicketApiService by lazy {
+        Retrofit.Builder()
+            .baseUrl(AppConstants.Api.BASE_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(TicketApiService::class.java)
+    }
+}

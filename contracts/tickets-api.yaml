@@ -1,0 +1,306 @@
+﻿openapi: 3.0.3
+info:
+  title: Panini Support Tickets API
+  version: 0.1.0
+  description: Contrato de integracion futura para la PoC movil de tickets de soporte interno de Panini.
+servers:
+  - url: http://10.0.2.2:5147
+    description: API local futura para emulador Android
+  - url: https://api.panini-support.example.com
+    description: API futura de ambiente empresarial
+paths:
+  /api/auth/login:
+    post:
+      summary: Autenticacion simulada de usuario interno
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Usuario autenticado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Credenciales invalidas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/tickets:
+    get:
+      summary: Lista tickets de soporte
+      tags:
+        - Tickets
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/TicketStatus'
+        - name: priority
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/TicketPriority'
+        - name: category
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/TicketCategory'
+      responses:
+        '200':
+          description: Tickets ordenados por prioridad y fecha de creacion
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TicketResponse'
+    post:
+      summary: Crea un ticket de soporte
+      tags:
+        - Tickets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTicketRequest'
+      responses:
+        '201':
+          description: Ticket creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketResponse'
+        '422':
+          description: Error de validacion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/tickets/{ticketId}:
+    get:
+      summary: Obtiene el detalle de un ticket
+      tags:
+        - Tickets
+      parameters:
+        - $ref: '#/components/parameters/TicketId'
+      responses:
+        '200':
+          description: Detalle del ticket
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketResponse'
+        '404':
+          description: Ticket no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/tickets/{ticketId}/status:
+    patch:
+      summary: Actualiza el estado de un ticket
+      tags:
+        - Tickets
+      parameters:
+        - $ref: '#/components/parameters/TicketId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTicketStatusRequest'
+      responses:
+        '200':
+          description: Ticket actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketResponse'
+        '404':
+          description: Ticket no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/tickets/{ticketId}/priority:
+    patch:
+      summary: Actualiza la prioridad de un ticket
+      tags:
+        - Tickets
+      parameters:
+        - $ref: '#/components/parameters/TicketId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTicketPriorityRequest'
+      responses:
+        '200':
+          description: Ticket actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketResponse'
+        '404':
+          description: Ticket no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  parameters:
+    TicketId:
+      name: ticketId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: agente@panini.com
+        password:
+          type: string
+          example: demo123
+    UserResponse:
+      type: object
+      required:
+        - id
+        - name
+        - email
+        - role
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Agente de Soporte
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          example: SupportAgent
+    CreateTicketRequest:
+      type: object
+      required:
+        - title
+        - description
+        - supplierName
+        - category
+        - priority
+      properties:
+        title:
+          type: string
+          maxLength: 120
+          example: Faltante de sobres en entrega regional
+        description:
+          type: string
+          maxLength: 1000
+          example: El proveedor reporta cajas incompletas en la ruta norte.
+        supplierName:
+          type: string
+          example: Distribuidora Norte
+        category:
+          $ref: '#/components/schemas/TicketCategory'
+        priority:
+          $ref: '#/components/schemas/TicketPriority'
+    UpdateTicketStatusRequest:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          $ref: '#/components/schemas/TicketStatus'
+    UpdateTicketPriorityRequest:
+      type: object
+      required:
+        - priority
+      properties:
+        priority:
+          $ref: '#/components/schemas/TicketPriority'
+    TicketResponse:
+      type: object
+      required:
+        - id
+        - title
+        - description
+        - supplierName
+        - category
+        - priority
+        - status
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        supplierName:
+          type: string
+        category:
+          $ref: '#/components/schemas/TicketCategory'
+        priority:
+          $ref: '#/components/schemas/TicketPriority'
+        status:
+          $ref: '#/components/schemas/TicketStatus'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+    TicketCategory:
+      type: string
+      enum:
+        - Inventory
+        - Distribution
+        - Supplier
+        - Logistics
+        - Quality
+    TicketPriority:
+      type: string
+      enum:
+        - Low
+        - Medium
+        - High
+        - Critical
+    TicketStatus:
+      type: string
+      enum:
+        - Open
+        - InProgress
+        - WaitingSupplier
+        - Resolved
+        - Closed
+    ErrorResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: Ticket not found.
