@@ -1,0 +1,32 @@
+﻿# Root workspace
+.idea/
+.vscode/
+*.iml
+
+# Android / Gradle
+.gradle/
+**/.gradle/
+build/
+**/build/
+local.properties
+**/local.properties
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_
+
+# Kotlin / Android Studio
+.kotlin/
+**/.kotlin/
+
+# Secrets
+app/**/google-services.json
+google-services.json
+*-service-account*.json
+*serviceAccount*.json
+firebase-adminsdk*.json
+
+# OS
+.DS_Store
+Thumbs.db
