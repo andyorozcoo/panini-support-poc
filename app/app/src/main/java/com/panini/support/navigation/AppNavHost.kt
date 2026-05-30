@@ -7,9 +7,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.panini.support.ui.screens.login.LoginScreen
-import com.panini.support.ui.screens.tickets.CreateTicketPlaceholderScreen
-import com.panini.support.ui.screens.tickets.TicketDetailPlaceholderScreen
-import com.panini.support.ui.screens.tickets.TicketListPlaceholderScreen
+import com.panini.support.ui.screens.tickets.CreateTicketScreen
+import com.panini.support.ui.screens.tickets.TicketDetailScreen
+import com.panini.support.ui.screens.tickets.TicketListScreen
 
 @Composable
 fun AppNavHost() {
@@ -30,7 +30,7 @@ fun AppNavHost() {
         }
 
         composable(AppDestinations.TICKET_LIST) {
-            TicketListPlaceholderScreen(
+            TicketListScreen(
                 onCreateTicketClick = { navController.navigate(AppDestinations.CREATE_TICKET) },
                 onTicketClick = { ticketId ->
                     navController.navigate(AppDestinations.ticketDetailRoute(ticketId))
@@ -39,8 +39,13 @@ fun AppNavHost() {
         }
 
         composable(AppDestinations.CREATE_TICKET) {
-            CreateTicketPlaceholderScreen(
-                onBackClick = { navController.popBackStack() }
+            CreateTicketScreen(
+                onBackClick = { navController.popBackStack() },
+                onTicketCreated = { ticketId ->
+                    navController.navigate(AppDestinations.ticketDetailRoute(ticketId)) {
+                        popUpTo(AppDestinations.TICKET_LIST)
+                    }
+                }
             )
         }
 
@@ -48,7 +53,7 @@ fun AppNavHost() {
             route = AppDestinations.TICKET_DETAIL,
             arguments = listOf(navArgument("ticketId") { type = NavType.StringType })
         ) { backStackEntry ->
-            TicketDetailPlaceholderScreen(
+            TicketDetailScreen(
                 ticketId = backStackEntry.arguments?.getString("ticketId").orEmpty(),
                 onBackClick = { navController.popBackStack() }
             )
