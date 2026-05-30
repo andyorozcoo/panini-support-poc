@@ -13,13 +13,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -34,6 +33,7 @@ private val TicketDateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"
 @Composable
 fun TicketListScreen(
     onCreateTicketClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     onTicketClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TicketListViewModel = viewModel(
@@ -52,27 +52,28 @@ fun TicketListScreen(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "Tickets de soporte",
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                    Text(
-                        text = "Atencion interna para proveedores e inventario.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-                if (uiState.canCreateTickets) {
-                    Button(onClick = onCreateTicketClick) { Text("Crear") }
+                Text(
+                    text = "Tickets de soporte",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+                Text(
+                    text = "Atencion interna para proveedores e inventario.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (uiState.canCreateTickets) {
+                        Button(onClick = onCreateTicketClick) { Text("Crear") }
+                    }
+                    OutlinedButton(onClick = onSettingsClick) { Text("Configurar") }
                 }
             }
         }
@@ -82,32 +83,6 @@ fun TicketListScreen(
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.primary
         )
-
-        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = "Controles internos",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
-                )
-                FeatureFlagRow(
-                    label = "Crear tickets",
-                    checked = uiState.canCreateTickets,
-                    onCheckedChange = viewModel::setTicketCreationEnabled
-                )
-                FeatureFlagRow(
-                    label = "Cambiar prioridad",
-                    checked = uiState.canUpdatePriority,
-                    onCheckedChange = viewModel::setPriorityUpdatesEnabled
-                )
-            }
-        }
 
         if (uiState.tickets.isEmpty()) {
             Text(text = "No hay tickets registrados.", style = MaterialTheme.typography.bodyMedium)
@@ -167,20 +142,5 @@ private fun PriorityBadge(priority: TicketPriority) {
             style = MaterialTheme.typography.labelSmall,
             color = if (priority == TicketPriority.Low) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onPrimary
         )
-    }
-}
-@Composable
-private fun FeatureFlagRow(
-    label: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(text = label, style = MaterialTheme.typography.bodyMedium)
-        Switch(checked = checked, onCheckedChange = onCheckedChange)
     }
 }

@@ -13,7 +13,7 @@ En esta PoC se usan para demostrar control de alcance y capacidad de evolucion d
 
 ## Como se controlan
 
-Los flags se mantienen localmente en la aplicacion mediante `FeatureFlags`, pero no requieren editar codigo durante la demo. En el listado de tickets existe una seccion de controles internos con interruptores para activar o desactivar:
+Los flags se mantienen localmente en la aplicacion mediante `FeatureFlags`, pero no requieren editar codigo durante la demo. La aplicacion incluye una pantalla dedicada de Feature Flags, accesible desde el boton Configurar del listado de tickets. Desde esa vista se pueden activar o desactivar:
 
 - creacion de tickets;
 - cambio de prioridad.

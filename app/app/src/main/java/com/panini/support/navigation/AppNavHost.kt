@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.panini.support.ui.screens.login.LoginScreen
+import com.panini.support.ui.screens.settings.FeatureFlagsScreen
 import com.panini.support.ui.screens.tickets.CreateTicketScreen
 import com.panini.support.ui.screens.tickets.TicketDetailScreen
 import com.panini.support.ui.screens.tickets.TicketListScreen
@@ -32,10 +33,15 @@ fun AppNavHost() {
         composable(AppDestinations.TICKET_LIST) {
             TicketListScreen(
                 onCreateTicketClick = { navController.navigate(AppDestinations.CREATE_TICKET) },
+                onSettingsClick = { navController.navigate(AppDestinations.FEATURE_FLAGS) },
                 onTicketClick = { ticketId ->
                     navController.navigate(AppDestinations.ticketDetailRoute(ticketId))
                 }
             )
+        }
+
+        composable(AppDestinations.FEATURE_FLAGS) {
+            FeatureFlagsScreen(onBackClick = { navController.popBackStack() })
         }
 
         composable(AppDestinations.CREATE_TICKET) {
