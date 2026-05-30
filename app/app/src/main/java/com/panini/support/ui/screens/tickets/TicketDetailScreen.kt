@@ -2,6 +2,7 @@ package com.panini.support.ui.screens.tickets
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -57,9 +58,10 @@ fun TicketDetailScreen(
 
         Text(ticket.title, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
 
-        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
-            Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text("Proveedor: ${ticket.supplierName}")
+        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
+            Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("Proveedor", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                Text(ticket.supplierName)
                 Text("Categoria: ${ticket.category.label}")
                 Text("Prioridad: ${ticket.priority.label}")
                 Text("Estado: ${ticket.status.label}")
@@ -68,39 +70,52 @@ fun TicketDetailScreen(
             }
         }
 
-        Text("Descripcion", fontWeight = FontWeight.Bold)
-        Text(ticket.description)
+        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
+            Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text("Descripcion", fontWeight = FontWeight.Bold)
+                Text(ticket.description)
+            }
+        }
 
-        Text("Actualizar estado", fontWeight = FontWeight.Bold)
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        ActionSection(title = "Actualizar estado") {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-                Button(onClick = { viewModel.updateStatus(TicketStatus.InProgress) }) { Text("En proceso") }
-                Button(onClick = { viewModel.updateStatus(TicketStatus.WaitingSupplier) }) { Text("Proveedor") }
+                Button(onClick = { viewModel.updateStatus(TicketStatus.InProgress) }, modifier = Modifier.weight(1f)) { Text("Proceso") }
+                Button(onClick = { viewModel.updateStatus(TicketStatus.WaitingSupplier) }, modifier = Modifier.weight(1f)) { Text("Proveedor") }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-                Button(onClick = { viewModel.updateStatus(TicketStatus.Resolved) }) { Text("Resuelto") }
-                Button(onClick = { viewModel.updateStatus(TicketStatus.Closed) }) { Text("Cerrado") }
+                Button(onClick = { viewModel.updateStatus(TicketStatus.Resolved) }, modifier = Modifier.weight(1f)) { Text("Resuelto") }
+                Button(onClick = { viewModel.updateStatus(TicketStatus.Closed) }, modifier = Modifier.weight(1f)) { Text("Cerrado") }
             }
         }
 
         if (uiState.canUpdatePriority) {
-            Text("Actualizar prioridad", fontWeight = FontWeight.Bold)
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            ActionSection(title = "Actualizar prioridad") {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-                    Button(onClick = { viewModel.updatePriority(TicketPriority.Critical) }) { Text("Critica") }
-                    Button(onClick = { viewModel.updatePriority(TicketPriority.High) }) { Text("Alta") }
+                    Button(onClick = { viewModel.updatePriority(TicketPriority.Critical) }, modifier = Modifier.weight(1f)) { Text("Critica") }
+                    Button(onClick = { viewModel.updatePriority(TicketPriority.High) }, modifier = Modifier.weight(1f)) { Text("Alta") }
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-                    Button(onClick = { viewModel.updatePriority(TicketPriority.Medium) }) { Text("Media") }
-                    Button(onClick = { viewModel.updatePriority(TicketPriority.Low) }) { Text("Baja") }
+                    Button(onClick = { viewModel.updatePriority(TicketPriority.Medium) }, modifier = Modifier.weight(1f)) { Text("Media") }
+                    Button(onClick = { viewModel.updatePriority(TicketPriority.Low) }, modifier = Modifier.weight(1f)) { Text("Baja") }
                 }
             }
-            Text(
-                text = "Al cambiar la prioridad, el listado se reordena automaticamente.",
-                style = MaterialTheme.typography.bodySmall
-            )
         }
 
-        uiState.message?.let { Text(it, color = MaterialTheme.colorScheme.primary) }
+        uiState.message?.let { Text(it, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold) }
+    }
+}
+
+@Composable
+private fun ActionSection(title: String, content: @Composable ColumnScope.() -> Unit) {
+    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(14.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(title, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            content()
+        }
     }
 }
