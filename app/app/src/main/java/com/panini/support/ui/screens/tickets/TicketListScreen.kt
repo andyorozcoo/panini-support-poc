@@ -48,22 +48,41 @@ fun TicketListScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = "Tickets de soporte",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
-            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Tickets de soporte",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "Ordenados por prioridad para atender primero lo urgente.",
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
             if (uiState.canCreateTickets) {
                 Button(onClick = onCreateTicketClick) { Text("Crear") }
             }
         }
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            items(uiState.tickets, key = { it.id }) { ticket ->
-                TicketCard(ticket = ticket, onClick = { onTicketClick(ticket.id) })
+        Text(
+            text = "${uiState.tickets.size} tickets registrados",
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        if (uiState.tickets.isEmpty()) {
+            Text(
+                text = "No hay tickets registrados.",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                items(uiState.tickets, key = { it.id }) { ticket ->
+                    TicketCard(ticket = ticket, onClick = { onTicketClick(ticket.id) })
+                }
             }
         }
     }
@@ -82,8 +101,9 @@ private fun TicketCard(ticket: Ticket, onClick: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Text(text = ticket.title, fontWeight = FontWeight.Bold)
-            Text(text = ticket.supplierName, style = MaterialTheme.typography.bodyMedium)
-            Text(text = "${ticket.priority.label} | ${ticket.status.label} | ${ticket.category.label}")
+            Text(text = "Proveedor: ${ticket.supplierName}", style = MaterialTheme.typography.bodyMedium)
+            Text(text = "Prioridad: ${ticket.priority.label} | Estado: ${ticket.status.label}")
+            Text(text = "Categoria: ${ticket.category.label}")
             Text(
                 text = "Creado: ${ticket.createdAt.format(TicketDateFormatter)}",
                 style = MaterialTheme.typography.bodySmall

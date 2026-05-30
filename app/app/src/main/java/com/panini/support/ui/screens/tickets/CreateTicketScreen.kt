@@ -49,23 +49,30 @@ fun CreateTicketScreen(
     ) {
         OutlinedButton(onClick = onBackClick) { Text("Volver") }
         Text("Crear ticket", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+        Text(
+            text = "Registra incidentes reales de proveedores, inventario o distribucion.",
+            style = MaterialTheme.typography.bodyMedium
+        )
 
         OutlinedTextField(
             value = uiState.title,
             onValueChange = viewModel::onTitleChange,
             label = { Text("Titulo") },
+            placeholder = { Text("Ej. Faltante de sobres en bodega regional") },
             modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
             value = uiState.supplierName,
             onValueChange = viewModel::onSupplierChange,
             label = { Text("Proveedor") },
+            placeholder = { Text("Ej. Distribuidora Norte") },
             modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
             value = uiState.description,
             onValueChange = viewModel::onDescriptionChange,
             label = { Text("Descripcion") },
+            placeholder = { Text("Describe el impacto operativo del incidente") },
             minLines = 3,
             modifier = Modifier.fillMaxWidth()
         )
@@ -79,12 +86,18 @@ fun CreateTicketScreen(
             Button(onClick = { viewModel.onCategoryChange(TicketCategory.Supplier) }) { Text("Proveedor") }
             Button(onClick = { viewModel.onCategoryChange(TicketCategory.Logistics) }) { Text("Logistica") }
         }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(onClick = { viewModel.onCategoryChange(TicketCategory.Quality) }) { Text("Calidad") }
+        }
 
         Text("Prioridad: ${uiState.priority.label}", fontWeight = FontWeight.Bold)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(onClick = { viewModel.onPriorityChange(TicketPriority.Critical) }) { Text("Critica") }
             Button(onClick = { viewModel.onPriorityChange(TicketPriority.High) }) { Text("Alta") }
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(onClick = { viewModel.onPriorityChange(TicketPriority.Medium) }) { Text("Media") }
+            Button(onClick = { viewModel.onPriorityChange(TicketPriority.Low) }) { Text("Baja") }
         }
 
         uiState.errorMessage?.let { Text(it, color = MaterialTheme.colorScheme.error) }

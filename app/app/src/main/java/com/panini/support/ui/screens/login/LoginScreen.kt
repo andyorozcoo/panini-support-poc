@@ -45,7 +45,7 @@ fun LoginScreen(
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "Gestion interna de tickets",
+            text = "Tickets internos para proveedores, inventario y distribucion.",
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(top = 8.dp, bottom = 24.dp)
         )
@@ -65,6 +65,11 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 12.dp)
+        )
+        Text(
+            text = "Credenciales simuladas para la PoC.",
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(top = 8.dp)
         )
         uiState.errorMessage?.let { message ->
             Text(
